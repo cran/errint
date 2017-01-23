@@ -4,8 +4,8 @@
 \alias{sort_distributions}
 \title{Sort Distributions by Better Error Intervals}
 \usage{
-sort_distributions(phi, errors, dists = c("n", "nm", "l", "lm", "w", "b"),
-  decreasing = FALSE, ...)
+sort_distributions(phi, errors, dists = c("n", "nm", "l", "lm", "w", "b",
+  "moge"), decreasing = FALSE, ...)
 }
 \arguments{
 \item{phi}{residual values used to compute the error interval.}
@@ -39,11 +39,11 @@ Allowed distribution assumptions are:
  \item{"lm": }{General Laplace}
  \item{"b": }{Beta}
  \item{"w": }{Weibull}
+ \item{"moge": }{Moge}
 }
 }
 \examples{
-sort_distributions(rnorm(10000),rnorm(10000),dists=c("n","b"))
-sort_distributions(rnorm(10000),rnorm(10000),decreasing=TRUE)
+sort_distributions(rnorm(10),rnorm(10),decreasing=TRUE)
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}

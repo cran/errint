@@ -4,7 +4,8 @@
 \alias{best_distribution}
 \title{Distribution with Best Error Intervals}
 \usage{
-best_distribution(phi, errors, dists = c("n", "nm", "l", "lm", "w", "b"), ...)
+best_distribution(phi, errors, dists = c("n", "nm", "l", "lm", "w", "b",
+  "moge"), ...)
 }
 \arguments{
 \item{phi}{residual values used to compute the error interval.}
@@ -35,11 +36,11 @@ Allowed distribution assumptions are:
  \item{"lm": }{General Laplace}
  \item{"b": }{Beta}
  \item{"w": }{Weibull}
+ \item{"moge": }{Moge}
 }
 }
 \examples{
-best_distribution(rnorm(10000),rnorm(10000),dists=c("n","b"))
-best_distribution(rnorm(10000),rnorm(10000))
+best_distribution(rnorm(10),rnorm(10),dists=c("n","b"))
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}

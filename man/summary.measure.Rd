@@ -4,7 +4,7 @@
 \alias{summary.measure}
 \title{Measures Summaries}
 \usage{
-\method{summary}{measure}(object, ...)
+summary.measure(object, ...)
 }
 \arguments{
 \item{object}{object of class \code{measure} to be printed.}

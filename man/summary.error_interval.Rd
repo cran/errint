@@ -4,7 +4,7 @@
 \alias{summary.error_interval}
 \title{Error Intervals Summaries}
 \usage{
-\method{summary}{error_interval}(object, ...)
+summary.error_interval(object, ...)
 }
 \arguments{
 \item{object}{object of class \code{error_interval} to be printed.}
@@ -20,7 +20,7 @@ to the summary of x.
 objects of class \code{error_interval}.
 }
 \examples{
-res<-error_interval(rnorm(100))
+res<-error_interval(rnorm(10))
 summary(res)
 }
 \author{

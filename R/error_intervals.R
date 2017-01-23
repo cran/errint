@@ -2,7 +2,8 @@
 #'
 #' @rdname error_interval
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
+#' 
 #'
 #' @references 
 #' Link to the scientific paper
@@ -31,12 +32,12 @@
 #' @export
 #'
 #' @examples
-#' error_interval(rnorm(100))
+#' error_interval(rnorm(10))
 #'
-#' error_interval(rnorm(100),s=0.1,dist="lm")
+#' error_interval(rnorm(10),s=0.1,dist="lm")
 
 
-error_interval <- function(phi, s=0.05, dist="n",tol=10^-6, ...) UseMethod("error_interval");
+error_interval <- function(phi, s=0.05, dist="n", tol=10^-6, ...) UseMethod("error_interval");
 
 #' Error Intervals
 #'
@@ -56,7 +57,7 @@ error_interval <- function(phi, s=0.05, dist="n",tol=10^-6, ...) UseMethod("erro
 #' @examples
 #'
 #'
-#' l<-list(min=-1,max=1,err=0.05,s=0.1,dist="n",phi=rnorm(1000))
+#' l<-list(min=-1,max=1,err=0.05,s=0.1,dist="n",phi=rnorm(10))
 #' as.error_interval(l)
 #'
 #' v<-c("a","b")
@@ -90,7 +91,7 @@ as.error_interval <- function (x){
 #' @examples
 #'
 #'
-#' l<-list(min=-1,max=1,err=0.05,s=0.1,dist="n",phi=rnorm(1000))
+#' l<-list(min=-1,max=1,err=0.05,s=0.1,dist="n",phi=rnorm(10))
 #' is.error_interval(l)
 #' res<-as.error_interval(l)
 #' is.error_interval(res)
@@ -101,7 +102,7 @@ is.error_interval <- function (x){
 
 #' Error Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -127,12 +128,13 @@ is.error_interval <- function (x){
 #'
 #' @return Returns an object of class \code{c("error_interval","list")}
 #' with information regarding the error intervals built.
+#' 
 #' @export
 #'
 #' @examples
-#' error_interval(rnorm(100))
+#' error_interval(rnorm(10))
 #'
-#' error_interval(rnorm(100),s=0.1,dist="lm")
+#' error_interval(rnorm(10),s=0.1,dist="lm")
 
 
 error_interval.default <- function(phi, s=0.05, dist="n",tol=10^-6, ...)
@@ -141,14 +143,15 @@ error_interval.default <- function(phi, s=0.05, dist="n",tol=10^-6, ...)
   else if (dist=="lm") {int_lap_mu(phi,s,...);}
   else if (dist=="n") {int_gau(phi,s,...);}
   else if (dist=="nm") {int_gau_mu(phi,s,...);}
-  else if (dist=="b") {int_beta(abs(phi)/(max(abs(phi))+tol),s,...);}
+  else if (dist=="b") {int_beta(abs(phi)/(max(abs(phi))+tol),s,original_phi=phi,...);}
   else if (dist=="w") {int_weibull(abs(phi),s,...);}
+  else if (dist=="moge") {int_moge(abs(phi),s,...);}
   return(res);
 }
 
 #' Printing Error Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -170,7 +173,7 @@ error_interval.default <- function(phi, s=0.05, dist="n",tol=10^-6, ...)
 #' @export
 #'
 #' @examples
-#' res<-error_interval(rnorm(100))
+#' res<-error_interval(rnorm(10))
 #' print(res)
 
 
@@ -180,7 +183,7 @@ print.error_interval<- function(x, ...){
 
 #' Error Intervals Summaries
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -203,10 +206,10 @@ print.error_interval<- function(x, ...){
 #' to the summary of x.
 #' @seealso \link{error_interval}
 #' 
-#' @S3method summary error_interval
+#' @export summary error_interval
 #'
 #' @examples
-#' res<-error_interval(rnorm(100))
+#' res<-error_interval(rnorm(10))
 #' summary(res)
 
 summary.error_interval<- function(object, ...){
@@ -218,6 +221,7 @@ summary.error_interval<- function(object, ...){
   else if (object[["dist"]]=="nm") {dist<-"General Gaussian";}
   else if (object[["dist"]]=="b") {dist<-"Beta";}
   else if (object[["dist"]]=="w") {dist<-"Weibull";}
+  else if (object[["dist"]]=="moge") {dist<-"Moge";}
   res<-list(min=object[["min"]],max=object[["max"]],err=object[["err"]],
             s=object[["s"]],dist=dist,range=range,rel_err=rel_err);
   class(res)<-c("summary.error_interval","list");
@@ -226,7 +230,7 @@ summary.error_interval<- function(object, ...){
 
 #' Printing Error Intervals Summaries
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -248,7 +252,7 @@ summary.error_interval<- function(object, ...){
 #' @export
 #'
 #' @examples
-#' res<-error_interval(rnorm(100))
+#' res<-error_interval(rnorm(10))
 #' summary(res)
 
 print.summary.error_interval<- function(x, ...){
@@ -273,7 +277,7 @@ print.summary.error_interval<- function(x, ...){
 #'
 #' @rdname measure
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -365,7 +369,7 @@ is.measure <- function (x){
 
 #' Measure
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -402,7 +406,7 @@ measure.default <- function(s,acc,f=function(x,y){abs(x-y)})
 
 #' Printing Measures
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -433,7 +437,7 @@ print.measure<- function(x, ...){
 
 #' Measures Summaries
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -456,7 +460,7 @@ print.measure<- function(x, ...){
 #' to the summary of x.
 #' @seealso \link{measure}
 #' 
-#' @S3method summary measure
+#' @export summary measure
 #
 #' @examples
 #' res<-measure(0.1,0.7)
@@ -470,7 +474,7 @@ summary.measure<- function(object, ...){
 
 #' Printing Measures Summaries
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -513,7 +517,7 @@ print.summary.measure<- function(x, ...){
 #'
 #' @rdname df_intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -563,7 +567,7 @@ df_intervals <- function(distributions,errs) UseMethod("df_intervals");
 #' @examples
 #'
 #'
-#' df<-data.frame(distribution=rnorm(1000),error=rnorm(1000))
+#' df<-data.frame(distribution=rnorm(10),error=rnorm(10))
 #' as.df_intervals(df)
 #'
 #' v<-c("a","b")
@@ -597,7 +601,7 @@ as.df_intervals <- function (x){
 #' @examples
 #'
 #'
-#' df<-data.frame(distribution=rnorm(1000),error=rnorm(1000))
+#' df<-data.frame(distribution=rnorm(10),error=rnorm(10))
 #' is.df_intervals(df)
 #' res<-as.df_intervals(df)
 #' is.df_intervals(res)
@@ -607,7 +611,7 @@ is.df_intervals<- function (x){
 
 #' Data Frames of Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -647,7 +651,7 @@ df_intervals.default <- function(distributions,errs){
 
 #' Printing Data Frames of Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -681,7 +685,7 @@ print.df_intervals<- function(x, ...){
 #'
 #' @rdname prob_dens_func
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -738,7 +742,7 @@ p_laplace <- function(x,mu=0,sigma=1){
 #' p_gaussian(0.3)
 #' p_gaussian(0.3,mu=0.35,sigma_cuad=0.2)
 p_gaussian<- function(x,mu=0,sigma_cuad=1){
-  return(dnorm(x,mu,sqrt(sigma_cuad)));
+  return(stats::dnorm(x,mu,sqrt(sigma_cuad)));
 }
 
 #' Beta Probability Density Function
@@ -749,7 +753,7 @@ p_gaussian<- function(x,mu=0,sigma_cuad=1){
 #' of a random variable that has a Beta distribution with parameters \eqn{\alpha} and
 #' \eqn{\beta}.
 #'
-#' @param alpha shape1 parameter of the Beta distribution.
+#' @param alpha shape1 parameter of the Beta distribution or second parameter of the MOGE distribution.
 #' @param beta shape2 parameter of the Beta distribution.
 #'
 #' @seealso \link{dbeta}
@@ -761,7 +765,7 @@ p_gaussian<- function(x,mu=0,sigma_cuad=1){
 #' p_beta(0.3)
 #' p_beta(0.3,alpha=0.35,beta=0.2)
 p_beta<- function(x,alpha=1,beta=1){
-  return(dbeta(x,alpha,beta));
+  return(stats::dbeta(x,alpha,beta));
 }
 
 #' Weibull Probability Density Function
@@ -773,7 +777,7 @@ p_beta<- function(x,alpha=1,beta=1){
 #' and \eqn{\lambda}.
 #'
 #' @param k shape parameter of the Weibull distribution.
-#' @param lambda scale parameter of the Weibull distribution.
+#' @param lambda scale parameter of the Weibull distribution or first parameter of the MOGE distribution.
 #'
 #' @seealso \link{dweibull}
 #' @export
@@ -784,8 +788,31 @@ p_beta<- function(x,alpha=1,beta=1){
 #' p_weibull(0.3)
 #' p_weibull(0.3,k=0.35,lambda=0.2)
 p_weibull<- function(x,k=1,lambda=1){
-  return(dweibull(x,k,lambda));
+  return(stats::dweibull(x,k,lambda));
 }
+
+#' Moge Probability Density Function
+#'
+#' @rdname prob_dens_func
+#'
+#' @description \code{p_moge} computes the probability density function
+#' of a random variable that has a MOGE distribution with parameters \eqn{\lambda},\eqn{\alpha}
+#' and \eqn{\theta}.
+#'
+#' @param theta third parameter of the MOGE distribution.
+#'
+#' @export
+#'
+#' @examples
+#'
+#'
+#' p_moge(0.3)
+#' p_moge(0.3,lambda=0.2,alpha=0.3,theta=0.4)
+p_moge<- function(x,lambda=1,alpha=1,theta=1){
+  return((alpha*lambda*theta*exp(-lambda*x)*(1-exp(-lambda*x))^(alpha-1))/
+           ((theta+(1-theta)*(1-exp(-lambda*x))^alpha)^2))
+}
+
 
 
 
@@ -793,7 +820,7 @@ p_weibull<- function(x,k=1,lambda=1){
 #'
 #' @rdname build_err_int
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -824,8 +851,7 @@ p_weibull<- function(x,k=1,lambda=1){
 #' @export
 #'
 #' @examples
-#' int_lap(rnorm(100),0.1)
-#' int_lap(rbeta(100,0.1,0.2),0.6)
+#' int_lap(rnorm(10),0.1)
 int_lap <- function(phi,s){
   sigma<-mean(abs(phi),na.rm=T);
   ps<-(-sigma*log(2*s));
@@ -856,18 +882,19 @@ int_lap <- function(phi,s){
 #' \code{upper}, the loop stops and the last value of \code{ps} will be its final value.
 #'
 #' @seealso \link{p_gaussian}
+#' 
 #' @export
 #'
 #' @examples
 #'
 #'
-#' int_gau(rnorm(100),0.1)
-#' int_gau(rnorm(100),0.1,0.1,10^-3,10^2)
+#' int_gau(rnorm(10),0.1,0.1,10^-3,10^2)
 int_gau <- function(phi,s,ps=0,threshold=10^-2,upper=10^6){
   sigma<-mean(phi^2,na.rm=T);
 
+  integral<-0;
   while(ps < upper){
-    integral<-integrate(p_gaussian,-Inf,ps,sigma_cuad=sigma,mu=0)$value;
+    try(integral<-stats::integrate(p_gaussian,-Inf,ps,sigma_cuad=sigma,mu=0)$value);
     diff<-integral - (1-s);
 
     if (diff > 0){
@@ -894,14 +921,15 @@ int_gau <- function(phi,s,ps=0,threshold=10^-2,upper=10^6){
 #' @examples
 #'
 #'
-#' int_lap_mu(rnorm(100),0.1)
-#' int_lap_mu(rnorm(100),0.1,0.1,10^-3,10^2)
-int_lap_mu <- function(phi,s,ps=median(phi,na.rm=T),threshold=10^-2,upper=10^6){
-  mu<-median(phi,na.rm=T)
+#' int_lap_mu(rnorm(10),0.1,0.1,10^-3,10^2)
+int_lap_mu <- function(phi,s,ps=stats::median(phi,na.rm=T),threshold=10^-2,upper=10^6){
+  mu<-stats::median(phi,na.rm=T)
   sigma<-mean(abs(phi-mu),na.rm=T);
 
+  integral<-0;
+  
   while(ps < upper){
-    integral<-integrate(p_laplace,-Inf,ps,sigma=sigma,mu=mu)$value;
+    try(integral<-stats::integrate(p_laplace,-Inf,ps,sigma=sigma,mu=mu)$value);
     diff<-integral - (1-s);
 
     if (diff > 0){
@@ -928,14 +956,15 @@ int_lap_mu <- function(phi,s,ps=median(phi,na.rm=T),threshold=10^-2,upper=10^6){
 #' @examples
 #'
 #'
-#' int_gau_mu(rnorm(100),0.1)
-#' int_gau_mu(rnorm(100),0.1,0.1,10^-3,10^2)
+#' int_gau_mu(rnorm(10),0.1,0.1,10^-3,10^2)
 int_gau_mu <- function(phi,s,ps=mean(phi,na.rm=T),threshold=10^-2,upper=10^6){
   mu<-mean(phi,na.rm=T)
   sigma<-mean((phi-mu)^2,na.rm=T);
 
+  integral<-0;
+  
   while(ps < upper){
-    integral<-integrate(p_gaussian,-Inf,ps,sigma_cuad=sigma,mu=mu)$value;
+    try(integral<-stats::integrate(p_gaussian,-Inf,ps,sigma_cuad=sigma,mu=mu)$value);
     diff<-integral - (1-s);
 
     if (diff >= 0){
@@ -957,6 +986,7 @@ int_gau_mu <- function(phi,s,ps=mean(phi,na.rm=T),threshold=10^-2,upper=10^6){
 #' @description \code{int_beta} computes the error interval of a set of residuals
 #' assuming a Beta distribution.
 #'
+#' @param original_phi original \eqn{\{\phi_i\}} values. Only used for beta distribution.
 #' @param m1 first moment of the residuals. Used to compute \code{alpha_0}.
 #' @param m2 second moment of the residuals. Used to compute \code{beta_0}.
 #' @param alpha_0 initial value for Newton-Raphson method for the parameter \eqn{\alpha}.
@@ -965,11 +995,7 @@ int_gau_mu <- function(phi,s,ps=mean(phi,na.rm=T),threshold=10^-2,upper=10^6){
 #' See also 'Details' and \link{multiroot}.
 #'
 #' @details In addition, for the Beta distribution values of parameters \eqn{\alpha} and
-#' \eqn{\beta} are estimated using Newton-Raphson method, and for the Weibull distribution
-#' value of parameter \eqn{\kappa} is estimated using Newton-Raphson method and then estimated
-#' value of \eqn{\lambda} is computed using a closed form that depends on \eqn{\kappa}.
-#'
-#' See also 'References'.
+#' \eqn{\beta} are estimated using Newton-Raphson method.
 #'
 #' @seealso \link{p_beta}
 #' @export
@@ -979,13 +1005,14 @@ int_gau_mu <- function(phi,s,ps=mean(phi,na.rm=T),threshold=10^-2,upper=10^6){
 #' @examples
 #'
 #'
-#' int_beta(runif(100,0,0.99),0.1)
-#' int_beta(runif(100,0,0.99),0.1,alpha_0=1,beta_0=1)
-int_beta <- function(phi,s,ps=10^-4,threshold=10^-4,upper=1,
+#' int_beta(runif(10,0,0.99),0.1,alpha_0=1,beta_0=1)
+int_beta <- function(phi,s,original_phi=phi,
+                     ps=10^-4,threshold=10^-4,upper=1,
                      m1=mean(phi,na.rm=T),
                      m2=mean(phi^2,na.rm=T),
                      alpha_0=(m1*(m1-m2))/(m2 - m1^2),
-                     beta_0=(alpha_0*(1-m1)/m1)){
+                     beta_0=(alpha_0*(1-m1)/m1))
+                     {
 
 
   c1<-mean(log(phi),na.rm=T);
@@ -997,11 +1024,36 @@ int_beta <- function(phi,s,ps=10^-4,threshold=10^-4,upper=1,
 
 
   roots<-rootSolve::multiroot(f,c(alpha_0,beta_0))$root;
-  alpha<-roots[1];
-  beta<-roots[2];
+  if (exists("roots")){
+    alpha<-roots[1];
+    beta<-roots[2];
+  } else {
+    alpha<-alpha_0;
+    beta<-beta_0;
+  }
+  
 
+  
+  if (is.na(alpha)){
+    alpha<-alpha_0
+  }
+  
+  if (alpha <=0){
+    alpha<-alpha_0
+  }
+  
+  if (is.na(beta)){
+    beta<-beta_0;
+  }
+  
+  if (beta <=0){
+    beta<-beta_0;
+  }
+  
+  integral<-0;
+  
   while(ps < upper){
-    integral<-integrate(p_beta,0,ps,alpha=alpha,beta=beta)$value;
+    try(integral<-stats::integrate(p_beta,0,ps,alpha=alpha,beta=beta)$value);
     diff<-integral - (1-2*s);
 
     if (diff > 0){
@@ -1011,7 +1063,7 @@ int_beta <- function(phi,s,ps=10^-4,threshold=10^-4,upper=1,
       ps<-ps+threshold;
     }
   }
-  res<-list(min=0,max=ps,err=diff,s=s,dist="b",phi=phi);
+  res<-list(min=0,max=ps,err=diff,s=s,dist="b",phi=original_phi);
   class(res)<-c("error_interval","list");
   return(res);
 }
@@ -1028,6 +1080,10 @@ int_beta <- function(phi,s,ps=10^-4,threshold=10^-4,upper=1,
 #' @param k_0 initial value for Newton-Raphson method for the parameter \eqn{\kappa}.
 #' See also 'Details' and \link{multiroot}.
 #'
+#' @details For the Weibull distribution
+#' value of parameter \eqn{\kappa} is estimated using Newton-Raphson method and then estimated
+#' value of \eqn{\lambda} is computed using a closed form that depends on \eqn{\kappa}.
+#' 
 #' @seealso \link{p_weibull}
 #'
 #' \link{multiroot}
@@ -1036,8 +1092,7 @@ int_beta <- function(phi,s,ps=10^-4,threshold=10^-4,upper=1,
 #' @examples
 #'
 #'
-#' int_weibull(abs(rnorm(100)),0.1)
-#' int_weibull(abs(rnorm(100)),0.1,k_0=2)
+#' int_weibull(abs(rnorm(10)),0.1,k_0=2)
 int_weibull<- function(phi,s,ps=10^-4,threshold=10^-2,upper=10^6,k_0=1){
   c1<-mean(log(phi),na.rm=T);
 
@@ -1048,11 +1103,42 @@ int_weibull<- function(phi,s,ps=10^-4,threshold=10^-2,upper=10^6,k_0=1){
 
 
   roots<-rootSolve::multiroot(f,k_0)$root;
-  k<-roots[1];
-  lambda<-(mean(phi^k,na.rm=T))^(1/k);
+  if (exists("roots")){
+    k<-roots[1];
+  } else {
+    k<-k_0;
+  }
+  
+  
 
+  if (is.na(k)){
+    k<-k_0;
+  }
+  
+  if (k <=0){
+    k<-k_0;
+  }
+  
+ 
+  lambda<-(mean(phi^k,na.rm=T))^(1/k);
+  
+  if (is.na(lambda)){
+    lambda<-1;
+  }
+  
+  if (lambda <=0){
+    lambda<-1;
+  }
+  
+  if (lambda == Inf){
+    lambda<-1;
+    k<-k_0;
+  }
+
+  integral<-0;
+  
   while(ps < upper){
-    integral<-integrate(p_weibull,0,ps,k=k,lambda=lambda)$value;
+    try(integral<-stats::integrate(p_weibull,0,ps,k=k,lambda=lambda)$value);
     diff<-integral - (1-2*s);
 
     if (diff > 0){
@@ -1067,9 +1153,106 @@ int_weibull<- function(phi,s,ps=10^-4,threshold=10^-2,upper=10^6,k_0=1){
   return(res);
 }
 
+#' MOGE Error Interval
+#'
+#' @rdname build_err_int
+#'
+#' @description \code{int_moge} computes the error interval of a set of residuals
+#' assuming a MOGE distribution.
+#'
+#' @param lambda_0 initial value for Newton-Raphson method for the parameter \eqn{\lambda}.
+#' @param theta_0 initial value for Newton-Raphson method for the parameter \eqn{\theta}.
+#'
+#' @details For the MOGE distribution values of parameters \eqn{\lambda}, \eqn{\alpha} and
+#' \eqn{\theta} are estimated using Newton-Raphson method.
+#'
+#' See also 'References'.
+#'
+#' @seealso \link{p_moge}
+#' @export
+#' 
+#' @import rootSolve
+#'
+#' @examples
+#'
+#'
+#' int_moge(runif(10,0.01,0.99),0.1,lambda_0=2,alpha_0=3,theta_0=4)
+int_moge <- function(phi,s,ps=10^-4,threshold=10^-4,upper=10^6,
+                     lambda_0=1,alpha_0=1,theta_0=1)
+{
+  
+  
+  c1<- sum(phi,na.rm=T);
+  c2<-0;
+  c3<-0;
+  n<-length(phi);
+  
+  f <- function(x){
+    return(c(n/x[1] + (x[2]-1)*sum((phi*exp(-x[1]*phi))/(1-exp(-x[1]*phi))) - 2*x[2]*(1-x[3])*sum((phi*exp(-x[1]*phi)*(1-exp(-x[1]*phi))^(x[2]-1))/(x[3]+(1-x[3])*(1-exp(-x[1]*phi))^x[2]))-c1,
+             n/x[2]-sum(log(1-exp(-x[1]*phi)))+2*x[3]*sum((log(1-exp(-x[1]*phi)))/(x[3]+(1-x[3])*(1-exp(-x[1]*phi))^x[2]))-c2,
+             n/x[3]-2*sum((1-(1-exp(-x[1]*phi))^x[2])/(x[3]+(1-x[3])*(1-exp(-x[1]*phi))^x[2]))-c3))
+  }
+  
+  
+  
+  try(roots<-rootSolve::multiroot(f,c(lambda_0,alpha_0,theta_0))$root);
+  if (exists("roots")){
+    lambda<-roots[1];
+    alpha<-roots[2];
+    theta<-roots[3];
+  } else {
+    lambda<-lambda_0;
+    alpha<-alpha_0;
+    theta<-theta_0;
+  }
+  
+  
+  if (is.na(lambda)){
+    lambda<-lambda_0;
+  }
+  
+  if (lambda <=0){
+    lambda<-lambda_0;
+  }
+  
+  if (is.na(alpha)){
+    alpha<-alpha_0;
+  }
+  
+  if (alpha <=0){
+    alpha<-alpha_0;
+  }
+  
+  if (is.na(theta)){
+    theta<-theta_0;
+  }
+  
+  if (theta <=0){
+    theta<-theta_0;
+  }
+  
+  integral<-0;
+  
+  while(ps < upper){
+    try(integral<-stats::integrate(p_moge,0,ps,lambda=lambda,alpha=alpha,theta=theta)$value);
+    
+    diff<-integral - (1-2*s);
+    
+    if (diff > 0){
+      break;
+    }
+    else{
+      ps<-ps+threshold;
+    }
+  }
+  res<-list(min=0,max=ps,err=diff,s=s,dist="moge",phi=phi)
+  class(res)<-c("error_interval","list");
+  return(res);
+}
+
 #' Accuracy of Error intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -1105,9 +1288,9 @@ int_weibull<- function(phi,s,ps=10^-4,threshold=10^-2,upper=10^6,k_0=1){
 #' @export
 #'
 #' @examples
-#' interv<-int_gau(rnorm(1000),0.1)
-#' acc_intervals(interv,rnorm(1000))
-#' acc_intervals(interv,rnorm(1000),function(x,y){x-y})
+#' interv<-int_gau(rnorm(10),0.1)
+#' acc_intervals(interv,rnorm(10))
+#' acc_intervals(interv,rnorm(10),function(x,y){x-y})
 acc_intervals <- function(interv,errors,f=function(x,y){abs(x-y)},tol=10^-8){
   s<-interv[["s"]];
   dist<-interv[["dist"]];
@@ -1122,7 +1305,7 @@ acc_intervals <- function(interv,errors,f=function(x,y){abs(x-y)},tol=10^-8){
     sum(err_temp>= interv$min & err_temp <= interv$max)/length(err_temp);
   }
 
-  else if (dist=="w"){
+  else if (dist=="w" | dist=="moge"){
     err_temp<-abs(errors);
     sum(err_temp>= interv$min & err_temp <= interv$max)/length(err_temp);
   }
@@ -1138,7 +1321,7 @@ acc_intervals <- function(interv,errors,f=function(x,y){abs(x-y)},tol=10^-8){
 
 #' Distribution with Best Error Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -1173,16 +1356,16 @@ acc_intervals <- function(interv,errors,f=function(x,y){abs(x-y)},tol=10^-8){
 #'  \item{"lm": }{General Laplace}
 #'  \item{"b": }{Beta}
 #'  \item{"w": }{Weibull}
+#'  \item{"moge": }{Moge}
 #' }
 #'
 #' @seealso \link{df_intervals} \link{error_interval} \link{acc_intervals}
 #' @export
 #'
 #' @examples
-#' best_distribution(rnorm(10000),rnorm(10000),dists=c("n","b"))
-#' best_distribution(rnorm(10000),rnorm(10000))
+#' best_distribution(rnorm(10),rnorm(10),dists=c("n","b"))
 
-best_distribution <- function(phi,errors,dists=c("n","nm","l","lm","w","b"),...){
+best_distribution <- function(phi,errors,dists=c("n","nm","l","lm","w","b","moge"),...){
   distributions<-dists;
   errs<-vector();
   for (distribution in distributions){
@@ -1196,7 +1379,7 @@ best_distribution <- function(phi,errors,dists=c("n","nm","l","lm","w","b"),...)
 
 #' Sort Distributions by Better Error Intervals
 #'
-#' @author Jesus Prada, \email{jesus.prada@@estudiante.uam.es}
+#' @author Jesus Prada, \email{jesus.prada@estudiante.uam.es}
 #'
 #' @references 
 #' Link to the scientific paper
@@ -1233,15 +1416,15 @@ best_distribution <- function(phi,errors,dists=c("n","nm","l","lm","w","b"),...)
 #'  \item{"lm": }{General Laplace}
 #'  \item{"b": }{Beta}
 #'  \item{"w": }{Weibull}
+#'  \item{"moge": }{Moge}
 #' }
 #'
 #' @seealso \link{df_intervals} \link{error_interval} \link{acc_intervals} \link{order}
 #' @export
 #'
 #' @examples
-#' sort_distributions(rnorm(10000),rnorm(10000),dists=c("n","b"))
-#' sort_distributions(rnorm(10000),rnorm(10000),decreasing=TRUE)
-sort_distributions <- function(phi,errors,dists=c("n","nm","l","lm","w","b")
+#' sort_distributions(rnorm(10),rnorm(10),decreasing=TRUE)
+sort_distributions <- function(phi,errors,dists=c("n","nm","l","lm","w","b","moge")
                                ,decreasing=FALSE,...){
   distributions<-dists;
   errs<-vector();

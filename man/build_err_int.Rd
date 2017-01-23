@@ -6,6 +6,7 @@
 \alias{int_gau_mu}
 \alias{int_lap}
 \alias{int_lap_mu}
+\alias{int_moge}
 \alias{int_weibull}
 \title{Building Error Intervals}
 \usage{
@@ -13,18 +14,21 @@ int_lap(phi, s)
 
 int_gau(phi, s, ps = 0, threshold = 10^-2, upper = 10^6)
 
-int_lap_mu(phi, s, ps = median(phi, na.rm = T), threshold = 10^-2,
+int_lap_mu(phi, s, ps = stats::median(phi, na.rm = T), threshold = 10^-2,
   upper = 10^6)
 
 int_gau_mu(phi, s, ps = mean(phi, na.rm = T), threshold = 10^-2,
   upper = 10^6)
 
-int_beta(phi, s, ps = 10^-4, threshold = 10^-4, upper = 1,
-  m1 = mean(phi, na.rm = T), m2 = mean(phi^2, na.rm = T), alpha_0 = (m1 *
-  (m1 - m2))/(m2 - m1^2), beta_0 = (alpha_0 * (1 - m1)/m1))
+int_beta(phi, s, original_phi = phi, ps = 10^-4, threshold = 10^-4,
+  upper = 1, m1 = mean(phi, na.rm = T), m2 = mean(phi^2, na.rm = T),
+  alpha_0 = (m1 * (m1 - m2))/(m2 - m1^2), beta_0 = (alpha_0 * (1 - m1)/m1))
 
 int_weibull(phi, s, ps = 10^-4, threshold = 10^-2, upper = 10^6,
   k_0 = 1)
+
+int_moge(phi, s, ps = 10^-4, threshold = 10^-4, upper = 10^6,
+  lambda_0 = 1, alpha_0 = 1, theta_0 = 1)
 }
 \arguments{
 \item{phi}{residual values used to compute the error interval.}
@@ -39,6 +43,8 @@ See also 'Details'.}
 \item{upper}{maximum value to search for solution of the integral equation to solve.
 See also 'Details'.}
 
+\item{original_phi}{original \eqn{\{\phi_i\}} values. Only used for beta distribution.}
+
 \item{m1}{first moment of the residuals. Used to compute \code{alpha_0}.}
 
 \item{m2}{second moment of the residuals. Used to compute \code{beta_0}.}
@@ -51,6 +57,10 @@ See also 'Details' and \link{multiroot}.}
 
 \item{k_0}{initial value for Newton-Raphson method for the parameter \eqn{\kappa}.
 See also 'Details' and \link{multiroot}.}
+
+\item{lambda_0}{initial value for Newton-Raphson method for the parameter \eqn{\lambda}.}
+
+\item{theta_0}{initial value for Newton-Raphson method for the parameter \eqn{\theta}.}
 }
 \value{
 Returns an object of class \code{c("error_interval","list")}
@@ -76,6 +86,9 @@ assuming a Beta distribution.
 assuming a Weibull distribution.
 
 See also 'Details'.
+
+\code{int_moge} computes the error interval of a set of residuals
+assuming a MOGE distribution.
 }
 \details{
 For the Zero-\eqn{\mu} Laplace distribution the value of the corresponding integral
@@ -90,35 +103,37 @@ If \code{integral} is greater or equal than 0 or if \code{ps} gets bigger than
 \code{upper}, the loop stops and the last value of \code{ps} will be its final value.
 
 In addition, for the Beta distribution values of parameters \eqn{\alpha} and
-\eqn{\beta} are estimated using Newton-Raphson method, and for the Weibull distribution
+\eqn{\beta} are estimated using Newton-Raphson method.
+
+For the Weibull distribution
 value of parameter \eqn{\kappa} is estimated using Newton-Raphson method and then estimated
 value of \eqn{\lambda} is computed using a closed form that depends on \eqn{\kappa}.
+
+For the MOGE distribution values of parameters \eqn{\lambda}, \eqn{\alpha} and
+\eqn{\theta} are estimated using Newton-Raphson method.
 
 See also 'References'.
 }
 \examples{
-int_lap(rnorm(100),0.1)
-int_lap(rbeta(100,0.1,0.2),0.6)
+int_lap(rnorm(10),0.1)
 
 
-int_gau(rnorm(100),0.1)
-int_gau(rnorm(100),0.1,0.1,10^-3,10^2)
+int_gau(rnorm(10),0.1,0.1,10^-3,10^2)
 
 
-int_lap_mu(rnorm(100),0.1)
-int_lap_mu(rnorm(100),0.1,0.1,10^-3,10^2)
+int_lap_mu(rnorm(10),0.1,0.1,10^-3,10^2)
 
 
-int_gau_mu(rnorm(100),0.1)
-int_gau_mu(rnorm(100),0.1,0.1,10^-3,10^2)
+int_gau_mu(rnorm(10),0.1,0.1,10^-3,10^2)
 
 
-int_beta(runif(100,0,0.99),0.1)
-int_beta(runif(100,0,0.99),0.1,alpha_0=1,beta_0=1)
+int_beta(runif(10,0,0.99),0.1,alpha_0=1,beta_0=1)
 
 
-int_weibull(abs(rnorm(100)),0.1)
-int_weibull(abs(rnorm(100)),0.1,k_0=2)
+int_weibull(abs(rnorm(10)),0.1,k_0=2)
+
+
+int_moge(runif(10,0.01,0.99),0.1,lambda_0=2,alpha_0=3,theta_0=4)
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}
@@ -146,5 +161,7 @@ with theoretical background for this package is provided below.
 \link{p_weibull}
 
 \link{multiroot}
+
+\link{p_moge}
 }
 

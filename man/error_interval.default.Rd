@@ -29,9 +29,9 @@ with information regarding the error intervals built.
  \code{c("error_interval", "list")}.
 }
 \examples{
-error_interval(rnorm(100))
+error_interval(rnorm(10))
 
-error_interval(rnorm(100),s=0.1,dist="lm")
+error_interval(rnorm(10),s=0.1,dist="lm")
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}

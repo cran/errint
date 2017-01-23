@@ -15,7 +15,7 @@
 \code{print} objects of class \code{error_interval}.
 }
 \examples{
-res<-error_interval(rnorm(100))
+res<-error_interval(rnorm(10))
 print(res)
 }
 \author{

@@ -4,6 +4,7 @@
 \alias{p_beta}
 \alias{p_gaussian}
 \alias{p_laplace}
+\alias{p_moge}
 \alias{p_weibull}
 \title{Probability Density Functions}
 \usage{
@@ -14,6 +15,8 @@ p_gaussian(x, mu = 0, sigma_cuad = 1)
 p_beta(x, alpha = 1, beta = 1)
 
 p_weibull(x, k = 1, lambda = 1)
+
+p_moge(x, lambda = 1, alpha = 1, theta = 1)
 }
 \arguments{
 \item{x}{vector of points which values we want to compute.}
@@ -25,13 +28,15 @@ respectively.}
 
 \item{sigma_cuad}{variance parameter of the Gaussian distribution.}
 
-\item{alpha}{shape1 parameter of the Beta distribution.}
+\item{alpha}{shape1 parameter of the Beta distribution or second parameter of the MOGE distribution.}
 
 \item{beta}{shape2 parameter of the Beta distribution.}
 
 \item{k}{shape parameter of the Weibull distribution.}
 
-\item{lambda}{scale parameter of the Weibull distribution.}
+\item{lambda}{scale parameter of the Weibull distribution or first parameter of the MOGE distribution.}
+
+\item{theta}{third parameter of the MOGE distribution.}
 }
 \value{
 Returns a \code{numeric} object corresponding to the value
@@ -53,6 +58,10 @@ of a random variable that has a Beta distribution with parameters \eqn{\alpha} a
 \code{p_weibull} computes the probability density function
 of a random variable that has a Weibull distribution with parameters \eqn{\kappa}
 and \eqn{\lambda}.
+
+\code{p_moge} computes the probability density function
+of a random variable that has a MOGE distribution with parameters \eqn{\lambda},\eqn{\alpha}
+and \eqn{\theta}.
 }
 \examples{
 p_laplace(0.3)
@@ -69,6 +78,10 @@ p_beta(0.3,alpha=0.35,beta=0.2)
 
 p_weibull(0.3)
 p_weibull(0.3,k=0.35,lambda=0.2)
+
+
+p_moge(0.3)
+p_moge(0.3,lambda=0.2,alpha=0.3,theta=0.4)
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}

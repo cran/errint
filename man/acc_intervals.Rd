@@ -34,9 +34,9 @@ The formula used to normalize residual values to (0,1) when a Beta distribution 
 assumed is \eqn{\frac{|\phi|}{max{|\phi|}+tol}}{|\phi|*(max(|\phi|)+tol)^(-1)}.
 }
 \examples{
-interv<-int_gau(rnorm(1000),0.1)
-acc_intervals(interv,rnorm(1000))
-acc_intervals(interv,rnorm(1000),function(x,y){x-y})
+interv<-int_gau(rnorm(10),0.1)
+acc_intervals(interv,rnorm(10))
+acc_intervals(interv,rnorm(10),function(x,y){x-y})
 }
 \author{
 Jesus Prada, \email{jesus.prada@estudiante.uam.es}
